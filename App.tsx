@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -17,11 +17,9 @@ const App = () => {
 
   const cameraRef = useRef<any>()
 
-  const [picture, setPicture] = useState<string>()
-
 
   useEffect(() => {
-    MRZScanner.registerWithLicenseKey('6F86DBC3FBD98C4F0A15A79B80541F54CE486E672B2E9B0D93EA29A3AB013961908457358FFDEF1356594179548728E7')
+    MRZScanner.registerWithLicenseKey('PUT_YOUR_LICENCE_CODE_HERE')
     MRZScanner.setMaxThreads(2)
     MRZScanner.setContinuousScanningEnabled(true)
     MRZScanner.setIgnoreDuplicatesEnabled(false)
@@ -44,7 +42,8 @@ const App = () => {
     const options = { quality: 1, base64: true, doNotSave: true }
     const { base64: imageBase64 } = await cameraRef.current.takePictureAsync(options)
     if (imageBase64) {
-      setPicture(imageBase64)
+      console.log('imageBase64', imageBase64)
+      MRZScanner.scanImage(imageBase64)
     }
     setTimeout(() => takeBase64Picture(), 1000)
   }
@@ -54,13 +53,6 @@ const App = () => {
       setTimeout(() => takeBase64Picture(), 2000)
     }
   }, [cameraRef, MRZScanner])
-
-  useEffect(() => {
-    if (picture) {
-      console.log('pictureBase64', picture)
-      MRZScanner.scanImage(picture)
-    }
-  }, [picture])
 
   return (
     <>
